@@ -269,9 +269,10 @@ def N50(sorted_list):
 
     # We flip the list around here so we start with the largest element
     cumsum = 0
+    assembly_size=sum(sorted_list)
     for length in sorted_list[::-1]:
         cumsum += length
-        if cumsum >= sum(sorted_list)/2:
+        if cumsum >= assembly_size/2:
             return length
 
 
