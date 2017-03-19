@@ -9,13 +9,13 @@ If you prefer to run Assemblytics from the command-line this repository contains
 The whole web application can also be downloaded and run locally, utilizing the graphical user interface and giving the added benefit of the interactive dot plot which is only available in the web version: https://github.com/marianattestad/assemblytics_web
 
 
-To run Assemblytics on the command-line, simply copy all the scripts in this repository into your path and make them executable (chmod +x script_name) if necessary.
+To run Assemblytics on the command-line, simply make all scripts executable (chmod +x script_name)
 
 Follow the instructions at http://assemblytics.com for how to prepare your data and get a delta file for Assemblytics. 
 
 Then run as:
 ```
-Assemblytics delta_file output_prefix unique_anchor_length path_to_R_scripts
+python Assemblytics delta_file output_prefix unique_anchor_length path_to_R_scripts
 
 ```
 
