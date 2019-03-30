@@ -117,31 +117,6 @@ foreach my $qid (sort keys %alignments) # query name is the key for the alignmen
   my @refs = sort keys %{$alignments{$qid}}; # grab all alignments of that query
   my $numref = scalar @refs;
 
-  ## scan for fusions
-  # if ($numref > 1) # if query aligns to multiple chromosomes
-  # {
-  #   my $allrefs = join " ", @refs; # join the names together for output
-
-  #   print "== $qid [$numref] $allrefs\n"; # output the names of the chromosomes 
-  #   $candidatefusions++;
-
-  #   my $rcnt = 0;
-  #   foreach my $rid (@refs)
-  #   {
-  #     print "--\n" if ($rcnt > 0);
-  #     $rcnt++;
-
-  #     foreach my $a (@{$alignments{$qid}->{$rid}})
-  #     {
-  #       my $str = $a->{"str"};
-  #       print "$str\n";
-  #     }
-  #   }
-
-  #   print "\n";
-  # }
-
-
   ## Resort the alignments by query sort position
   my @qaligns;
   foreach my $rid (@refs)
@@ -361,27 +336,14 @@ foreach my $qid (sort keys %alignments) # query name is the key for the alignmen
               $typeguess = "None";
             }
           }
-          # my $ratio; 
-          # if ($qdist != 0){
-          # #   $ratio = abs(($rdist/$qdist)-1);
-          # #   if ($ratio < 0.1) {
-          # #     $typeguess = "Equilibrium";
-          # #   }
-            #   if ($rdist==$qdist || abs($qdist) > $longrange) {
-            #     $typeguess = "None";
-            #   }
-          # }
         }
-
-# my @chromosome_filter_choices = ("all-chromosomes","primary-chromosomes");
-# my @longrange_filter_choices = ("include-longrange","exclude-longrange");
 
         my $chromi_length = length $chromi; # length of the chromosome names: a way to filter to primary chromosomes and cut out alts and patches from the assembly
         my $chromj_length = length $chromj;
-        if ($typeguess ne "Inversion" && $typeguess ne "None" && $abs_event_size >= $minimum_event_size) { # always required
+        if ($typeguess ne "None" && $abs_event_size >= $minimum_event_size) { # always required
           if ($chromosome_filter eq "all-chromosomes" || ($chromi_length < 6 && $chromj_length < 6)) { # test for primary chromosomes unless "all-chromosomes" is chosen
-            if ($longrange_filter ne "exclude-longrange" || ($typeguess ne "Interchromosomal" && $typeguess ne "Longrange")) {
-              if ($longrange_filter ne "longrange-only" || ($typeguess eq "Interchromosomal" || $typeguess eq "Longrange")) {
+            if ($longrange_filter ne "exclude-longrange") {
+              if ($longrange_filter ne "longrange-only") {
                 if ($output_file eq "bedpe") {
                   print "$chromi\t$posi\t@{[$posi + 1]}\t$chromj\t$posj\t@{[$posj + 1]}\tAssemblytics_b_$sv_id_counter\t$abs_event_size\t$strandi\t$strandj\t$typeguess\t$rdist\t$qdist\t$qpos\t$abs_event_size\t$svtype\tbetween_alignments\n";  
                 }
@@ -392,43 +354,17 @@ foreach my $qid (sort keys %alignments) # query name is the key for the alignmen
                   if ($ref_stop eq $ref_start) {
                     $ref_stop = $ref_start + 1;
                   }
-                  # "chrom","start","stop","name","event.size","strand","event.type","ref.dist","query.dist","contig.name"
                   print "$chromi\t$ref_start\t$ref_stop\tAssemblytics_b_$sv_id_counter\t$abs_event_size\t+\t$typeguess\t$rdist\t$qdist\t$qpos\tbetween_alignments\n";  
                 }
               }
             }
           }
-          #if ($filter_type ~~ ("primary-allsizes","primary-shortrange") {
-           # && $typeguess ne "Interchromosomal" && $typeguess ne "Inversion" && $chromi_length < 6 && $chromj_length < 6 && $abs_event_size >= $minimum_event_size) {
         }
         $candidatesvs++;
-        #push @{$svstats{$svtype}}, $totaldist;
       }
     }
   }
 }
-
-
-
-# print "Processed $numalignments alignments found $candidatefusions fusions and $candidatesvs SVs\n";
-# print STDERR "Processed $numalignments alignments found $candidatefusions fusions and $candidatesvs SVs\n";
-
-# foreach my $svtype (keys %svstats)
-# {
-#   my @events = @{$svstats{$svtype}};
-#   my $cnt = scalar @events;
-
-#   my $sum = 0.0;
-#   foreach my $e (@events)
-#   {
-#     $sum += $e;
-#   }
-
-#   my $mean = sprintf ("%0.02f", $sum/$cnt);
-
-#   print "svtype[$svtype]: $cnt $mean\n";
-#   print STDERR "svtype[$svtype]: $cnt $mean\n";
-# }
 
 
 
