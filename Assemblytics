@@ -45,32 +45,5 @@ echo "STARTING,DONE,Starting unique anchor filtering."
 
 >&2 echo "1. Filter delta file"
 python Assemblytics_uniq_anchor.py --delta $DELTA --unique-length $UNIQUE_LENGTH --keep-small-uniques --out $OUTPUT_PREFIX
-if [ -e $OUTPUT_PREFIX.Assemblytics.unique_length_filtered_l$UNIQUE_LENGTH.delta.gz ];
-then
-    echo "UNIQFILTER,DONE,Step 1: Assemblytics_uniq_anchor.py completed successfully. Now finding variants between alignments." 
-    >&2 echo "2. Finding variants between alignments"
-    ./Assemblytics_between_alignments.pl $OUTPUT_PREFIX.coords.tab $MINIMUM_SIZE $MAXIMUM_SIZE all-chromosomes exclude-longrange bed > $OUTPUT_PREFIX.variants_between_alignments.bed
-
-    if [ -e $OUTPUT_PREFIX.variants_between_alignments.bed ];
-    then
-        echo "BETWEEN,DONE,Step 2: Assemblytics_between_alignments.pl completed successfully. Now finding variants within alignments."
-        >&2 echo "3. Finding variants within alignments"
-        python Assemblytics_within_alignment.py --delta $OUTPUT_PREFIX.Assemblytics.unique_length_filtered_l$UNIQUE_LENGTH.delta.gz --min $MINIMUM_SIZE > $OUTPUT_PREFIX.variants_within_alignments.bed
-
-        if [ -e $OUTPUT_PREFIX.variants_within_alignments.bed ];
-        then
-            echo "WITHIN,DONE,Step 3: Assemblytics_within_alignment.py completed successfully. Now combining the two sets of variants together."
-            >&2 echo "4. Combine variants between and within alignments";
-            HEADER="#reference\tref_start\tref_stop\tID\tsize\tstrand\ttype\tref_gap_size\tquery_gap_size\tquery_coordinates\tmethod"
-            cat <(echo -e $HEADER) $OUTPUT_PREFIX.variants_within_alignments.bed $OUTPUT_PREFIX.variants_between_alignments.bed > $OUTPUT_PREFIX.Assemblytics_structural_variants.bed
-
-        else
-            echo "WITHIN,FAIL,Step 3: Assemblytics_within_alignment.py failed: Possible problem before this step or with Python on server."
-        fi
-    else
-        echo "BETWEEN,FAIL,Step 2: Assemblytics_between_alignments.pl failed: Possible problem with Perl or show-coords on server." 
-    fi
-else
-    echo "UNIQFILTER,FAIL,Step 1: Assemblytics_uniq_anchor.py failed: Possible problem with Python or Python packages on server." 
-fi
-
+perl Assemblytics_between_alignments.pl $OUTPUT_PREFIX.coords.tab $MINIMUM_SIZE $MAXIMUM_SIZE all-chromosomes include-longrange bedpe > $OUTPUT_PREFIX.variants_between_alignments.bedpe
+python Assemblytics_within_alignment.py --delta $OUTPUT_PREFIX.Assemblytics.unique_length_filtered_l$UNIQUE_LENGTH.delta.gz --min $MINIMUM_SIZE > $OUTPUT_PREFIX.variants_within_alignments.bed
