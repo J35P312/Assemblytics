@@ -1,22 +1,22 @@
 # Assemblytics: a web analytics tool for the detection of variants from an assembly 
 
-Assemblytics is available online at http://assemblytics.com
-
-Please cite our paper in Bioinformatics: http://www.ncbi.nlm.nih.gov/pubmed/27318204
-
-If you prefer to run Assemblytics from the command-line this repository contains all the code, from unique anchor filtering and calling variants to creating the output plots and summary tables. 
-
-The whole web application can also be downloaded and run locally, utilizing the graphical user interface and giving the added benefit of the interactive dot plot which is only available in the web version: https://github.com/marianattestad/assemblytics_web
-
+Modified version of assemblytics, including faster computation of N50, and removal of the interchromosomal/inversion variant filters.
+The R scripts are removed, and the maximum variant length is set to entire chromosome, minimum variant size is set to 100
 
 To run Assemblytics on the command-line, simply make all scripts executable (chmod +x script_name)
 
-Follow the instructions at http://assemblytics.com for how to prepare your data and get a delta file for Assemblytics. 
-
 Then run as:
+
 ```
-python Assemblytics delta_file output_prefix unique_anchor_length path_to_R_scripts
+python Assemblytics delta_file output_prefix unique_anchor_length
 
 ```
 
-Important: Use only contigs rather than scaffolds from the assembly. This will prevent false positives when the number of Ns in the scaffolded sequence does not match perfectly to the distance in the reference.
+The delta file  may be produced using nucmer:
+
+```
+nucmer Reference.fa  Query.fa -p prefix
+```
+
+# Cite
+Please cite http://www.ncbi.nlm.nih.gov/pubmed/27318204
